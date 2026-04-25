@@ -31,6 +31,15 @@ DarkMode.Enable(form);
 form.Show();
 ```
 
+Example: When a Button gets clicked
+```csharp
+private void buttonDarkMode_Click(object sender, EventArgs e)
+{
+    DarkMode.Enable(this);
+}
+```
+
+
 # Inherit
 You can also inherit the current Windows User Dark/Light Mode preference to this Form.
 
