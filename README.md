@@ -36,4 +36,4 @@ You can also inherit the current Windows User Dark/Light Mode preference to this
 
 Usage: `DarkMode.Inherit(form);`
 
-Can only Inherit on Windows Operating Systems that support Dark Mode (Window 10/11), otherwise Inherit will automatically default to standard Light Mode (change with `DarkMode.UserDefault`).
+Can only Inherit on Windows Operating Systems that support Dark Mode (Window 10/11), otherwise Inherit will automatically default to standard Light Mode (change this with `DarkMode.UserDefault`).
