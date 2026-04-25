@@ -1,5 +1,5 @@
 # DarkMode.cs
-A C# Class for .NET Framework 2.0 - 4.8.1 (Windows 98 - Windows 11) to enable Dark Mode on Windows Forms.
+A C# Class file for .NET Framework 2.0 - 4.8.1 (Windows 98 - Windows 11) to enable Dark Mode on Windows Forms.
 
 By default only .NET 9.0 (no Framework) and higher supports Dark Mode natively, which is an optional download for Windows 10/11 only.
 
