@@ -344,7 +344,8 @@ public static class DarkMode
     private static void DesignerControls(Form form, bool darkmode)
     {
         IContainer components = (IContainer)form.GetType().GetField("components", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(form);
-        
+        if (components == null) { return; }
+
         foreach (IComponent component in components.Components)
         {
             if (component is ContextMenuStrip)
