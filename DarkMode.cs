@@ -16,10 +16,11 @@ public static class DarkMode
     public static Color GrayScale3 = ColorGradientGray(63);
 
     private static Color ColorGradientGray(int gradient) { return Color.FromArgb(gradient, gradient, gradient); }
+    private static string OS = Convert.ToString(Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", null));
 
     public static void Inherit(Form form)
     {
-        if (Environment.OSVersion.Version.Major >= 6) // Windows Vista or higher
+        if (OS.StartsWith("Windows 10") || OS.StartsWith("Windows 11"))
         {
             RegistryKey rkUserDefault = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", false);
             UserDefault = !Convert.ToBoolean(rkUserDefault.GetValue("AppsUseLightTheme", true));
@@ -27,38 +28,41 @@ public static class DarkMode
 
         if (UserDefault == true)
         {
-            form.Invalidate();
-
-            TitleBar(form, true);
-            Form(form, true);
-            RefreshForm(form);
+            Apply(form, true);
         }
-        /*else if (UserDefault == false)
+        /*if (UserDefault == false)
         {
-            form.Invalidate();
-            
-            TitleBar(form, false);
-            Form(form, false);
-            RefreshForm(form);
+            Apply(form, false);
         }*/
     }
 
     public static void Enable(Form form)
     {
-        form.Invalidate();
-
-        TitleBar(form, true);
-        Form(form, true);
-        RefreshForm(form);
+        Apply(form, true);
     }
 
     public static void Disable(Form form)
     {
-        form.Invalidate();
+        Apply(form, false);
+    }
 
-        TitleBar(form, false);
-        Form(form, false);
-        RefreshForm(form);
+    private static void Apply(Form form, bool darkmode)
+    {
+        form.SuspendLayout();
+
+        TitleBar(form, darkmode);
+        Form(form, darkmode);
+
+        form.ResumeLayout(true);
+
+        // Title Bar graphics issue fix:
+        FormWindowState fwsOriginal = form.WindowState;
+        form.WindowState = FormWindowState.Minimized;
+        System.Threading.Thread.Sleep(100); // Wait
+        form.WindowState = fwsOriginal;
+
+        form.Invalidate(true);
+        form.Update();
     }
 
     [DllImport("dwmapi.dll", PreserveSig = true)]
@@ -66,19 +70,11 @@ public static class DarkMode
 
     private static void TitleBar(Form form, bool darkmode)
     {
-        if (Environment.OSVersion.Version.Major >= 6) // Windows Vista or higher
+        if (OS.StartsWith("Windows 10") || OS.StartsWith("Windows 11"))
         {
             const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-            DwmSetWindowAttribute(form.Handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkmode, Marshal.SizeOf(darkmode)); // Windows 10 + 11
+            DwmSetWindowAttribute(form.Handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkmode, Marshal.SizeOf(darkmode));
         }
-    }
-
-    private static void RefreshForm(Form form)
-    {
-        FormWindowState fwsOriginal = form.WindowState;
-        form.WindowState = FormWindowState.Minimized;
-        System.Threading.Thread.Sleep(100); // Wait
-        form.WindowState = fwsOriginal;
     }
 
     private static void Form(Form form, bool darkmode)
