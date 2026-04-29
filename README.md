@@ -5,17 +5,21 @@ By default only .NET 9.0 (no Framework) and higher supports Dark Mode natively, 
 
 README: https://wiki.danit.nl/index.php?title=DarkMode.cs
 
-Example: Default Light Mode / Dark Mode Enabled
+_Example:_ Default Light Mode / Dark Mode
 
 ![Preview](https://wiki.danit.nl/images/8/87/DarkMode_Example.png)
 
 # Usage
  ![Preview](https://wiki.danit.nl/images/d/d4/DarkMode_Solution.png)
  
-1. Add DarkMode.cs to the project solution.
-2. Add `DarkMode.Enable(form);` to every Form that needs Dark Mode.
-   
-Example: On each Form Initialize Event
+Add DarkMode.cs to the project solution.
+
+## Enable
+Add `DarkMode.Enable(form);` to every Form that needs Dark Mode.
+
+Place your custom style changes after this.
+
+_Example:_ On each Form Initialize Event
 ```csharp
 public Form1()
 {
@@ -24,14 +28,14 @@ public Form1()
 }
 ```
 
-Example: When creating a Form instance
+_Example:_ When creating a Form instance
 ```csharp
 Form1 form = new Form1();
 DarkMode.Enable(form);
 form.Show();
 ```
 
-Example: When a Button gets clicked
+_Example:_ When a Button gets clicked
 ```csharp
 private void buttonDarkMode_Click(object sender, EventArgs e)
 {
@@ -39,10 +43,14 @@ private void buttonDarkMode_Click(object sender, EventArgs e)
 }
 ```
 
-
-# Inherit
-You can also inherit the current Windows User Dark/Light Mode preference to this Form.
+## Inherit
+You can also instead inherit the current Windows User Dark/Light Mode preference to this Form.
 
 Usage: `DarkMode.Inherit(form);`
 
-Can only Inherit on Windows Operating Systems that support Dark Mode (Window 10/11), otherwise Inherit will automatically default to standard Light Mode (change this with `DarkMode.UserDefault`).
+Can only Inherit on Windows versions that support Dark Mode (Window 10/11), otherwise Inherit will automatically default to standard Light Mode (change this with `DarkMode.UserDefault`).
+
+## Disable
+Revert this Form back to standard 'Light Mode' style defaults.
+
+Usage: `DarkMode.Disable(form);`
