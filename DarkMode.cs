@@ -8,14 +8,15 @@ using Microsoft.Win32; // Registry
 public static class DarkMode
 {
     public static bool UserDefault = false;
-    public static bool FlatStyle = true;
+    public static Color DarkBack1 = GradientGray(31);
+    public static Color DarkBack2 = GradientGray(47);
+    public static Color DarkBack3 = GradientGray(63);
     public static Color DarkText = Color.White;
     public static Color LightText = Color.Black;
-    public static Color GrayScale1 = ColorGradientGray(31);
-    public static Color GrayScale2 = ColorGradientGray(47);
-    public static Color GrayScale3 = ColorGradientGray(63);
+    public static Color DarkToolStrip = GradientGray(43);
+    public static Color LightToolStrip = Color.White;
 
-    private static Color ColorGradientGray(int gradient) { return Color.FromArgb(gradient, gradient, gradient); }
+    private static Color GradientGray(int gradient) { return Color.FromArgb(gradient, gradient, gradient); }
     private static string OS = Convert.ToString(Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", null));
 
     public static void Inherit(Form form)
@@ -55,14 +56,17 @@ public static class DarkMode
 
         form.ResumeLayout(true);
 
-        // Title Bar graphics issue fix:
-        FormWindowState fwsOriginal = form.WindowState;
-        form.WindowState = FormWindowState.Minimized;
-        System.Threading.Thread.Sleep(100); // Wait
-        form.WindowState = fwsOriginal;
+        if (OS.StartsWith("Windows 10") || OS.StartsWith("Windows 11")) // Title Bar graphics glitch fix
+        {
+            FormWindowState fwsOriginal = form.WindowState;
+            form.WindowState = FormWindowState.Minimized;
+            System.Threading.Thread.Sleep(100); // Wait
+            form.WindowState = fwsOriginal;
+        }
 
         form.Invalidate(true);
         form.Update();
+        form.Activate();
     }
 
     [DllImport("dwmapi.dll", PreserveSig = true)]
@@ -81,7 +85,7 @@ public static class DarkMode
     {
         if (darkmode == true)
         {
-            form.BackColor = GrayScale1;
+            form.BackColor = DarkBack1;
             form.ForeColor = Color.White;
         }
         if (darkmode == false)
@@ -98,236 +102,237 @@ public static class DarkMode
     {
         switch (control.GetType().Name)
         {
-            case "TabControl":
-                TabControl TabControl = (TabControl)control;
+            /*case "TabControl":
+                TabControl tc = (TabControl)control;
                 if (darkmode == true)
                 {
-                    TabControl.Appearance = TabAppearance.Normal;
+                    tc.Appearance = TabAppearance.Normal;
                 }
-                break;
+                break;*/
 
             case "TabPage":
-                TabPage TabPage = (TabPage)control;
+                TabPage tp = (TabPage)control;
                 if (darkmode == true)
                 {
-                    TabPage.BackColor = GrayScale2;
+                    tp.BackColor = DarkBack2;
                 }
                 else if (darkmode == false)
                 {
-                    TabPage.BackColor = SystemColors.Window;
+                    tp.BackColor = SystemColors.Window;
                 }
                 break;
 
             case "GroupBox":
-                GroupBox GroupBox = (GroupBox)control;
+                GroupBox gb = (GroupBox)control;
                 if (darkmode == true)
                 {
-                    GroupBox.BackColor = GrayScale2;
-                    GroupBox.ForeColor = DarkText;
+                    gb.BackColor = DarkBack2;
+                    gb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    GroupBox.BackColor = SystemColors.ControlLight;
-                    GroupBox.ForeColor = LightText;
+                    //gb.BackColor = SystemColors.ControlLight;
+                    gb.BackColor = SystemColors.Control;
+                    gb.ForeColor = LightText;
                 }
                 break;
 
             case "Panel":
-                Panel Panel = (Panel)control;
+                Panel p = (Panel)control;
                 if (darkmode == true)
                 {
-                    Panel.BackColor = GrayScale2;
+                    p.BackColor = DarkBack2;
                 }
                 else if (darkmode == false)
                 {
-                    Panel.BackColor = SystemColors.ControlLight;
+                    p.BackColor = SystemColors.ControlLight;
                 }
                 break;
 
             case "Label":
-                Label Label = (Label)control;
+                Label lbl = (Label)control;
                 if (darkmode == true)
                 {
-                    Label.BackColor = Color.Transparent;
+                    lbl.BackColor = Color.Transparent;
                 }
                 else if (darkmode == false)
                 {
-                    Label.BackColor = Color.Transparent;
+                    lbl.BackColor = Color.Transparent;
                 }
                 break;
 
             case "LinkLabel":
-                LinkLabel LinkLabel = (LinkLabel)control;
+                LinkLabel llbl = (LinkLabel)control;
                 if (darkmode == true)
                 {
-                    LinkLabel.BackColor = Color.Transparent;
-                    LinkLabel.LinkColor = Color.LightBlue;
+                    llbl.BackColor = Color.Transparent;
+                    llbl.LinkColor = Color.LightBlue;
                 }
                 else if (darkmode == false)
                 {
-                    LinkLabel.BackColor = Color.Transparent;
-                    LinkLabel.LinkColor = Color.FromArgb(0, 0, 255);
+                    llbl.BackColor = Color.Transparent;
+                    llbl.LinkColor = Color.FromArgb(0, 0, 255);
                 }
                 break;
 
             case "Button":
-                Button Button = (Button)control;
-
-                if (FlatStyle == true) Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                //else if (FlatStyle == false) Button.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+                Button btn = (Button)control;
 
                 if (darkmode == true)
                 {
-                    Button.BackColor = GrayScale3;
+                    btn.FlatStyle = FlatStyle.Flat;
+                    btn.BackColor = DarkBack3;
+                    btn.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    //Button.BackColor = SystemColors.ControlLight;
-                    Button.BackColor = Color.Transparent;
+                    btn.FlatStyle = FlatStyle.System;
+                    btn.BackColor = SystemColors.Control;
+                    btn.ForeColor = LightText;
                 }
                 break;
 
             case "TextBox":
-                TextBox TextBox = (TextBox)control;
+                TextBox tb = (TextBox)control;
                 if (darkmode == true)
                 {
-                    TextBox.BackColor = GrayScale3;
-                    TextBox.ForeColor = DarkText;
+                    tb.BackColor = DarkBack3;
+                    tb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    TextBox.BackColor = SystemColors.Window;
-                    TextBox.ForeColor = LightText;
+                    tb.BackColor = SystemColors.Window;
+                    tb.ForeColor = LightText;
                 }
                 break;
 
             case "MaskedTextBox":
-                MaskedTextBox MaskedTextBox = (MaskedTextBox)control;
+                MaskedTextBox mtb = (MaskedTextBox)control;
                 if (darkmode == true)
                 {
-                    MaskedTextBox.BackColor = GrayScale3;
-                    MaskedTextBox.ForeColor = DarkText;
+                    mtb.BackColor = DarkBack3;
+                    mtb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    MaskedTextBox.BackColor = SystemColors.Window;
-                    MaskedTextBox.ForeColor = LightText;
+                    mtb.BackColor = SystemColors.Window;
+                    mtb.ForeColor = LightText;
                 }
                 break;
 
             case "RichTextBox":
-                RichTextBox RichTextBox = (RichTextBox)control;
+                RichTextBox rtb = (RichTextBox)control;
                 if (darkmode == true)
                 {
-                    RichTextBox.BackColor = GrayScale3;
-                    RichTextBox.ForeColor = DarkText;
+                    rtb.BackColor = DarkBack3;
+                    rtb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    RichTextBox.BackColor = SystemColors.Window;
-                    RichTextBox.ForeColor = LightText;
+                    rtb.BackColor = SystemColors.Window;
+                    rtb.ForeColor = LightText;
                 }
                 break;
 
             case "ComboBox":
-                ComboBox ComboBox = (ComboBox)control;
+                ComboBox cb = (ComboBox)control;
                 if (darkmode == true)
                 {
-                    ComboBox.BackColor = GrayScale3;
-                    ComboBox.ForeColor = DarkText;
+                    cb.BackColor = DarkBack3;
+                    cb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    ComboBox.BackColor = SystemColors.Window;
-                    ComboBox.ForeColor = LightText;
+                    cb.BackColor = SystemColors.Window;
+                    cb.ForeColor = LightText;
                 }
                 break;
 
             case "NumericUpDown":
-                NumericUpDown NumericUpDown = (NumericUpDown)control;
+                NumericUpDown nud = (NumericUpDown)control;
                 if (darkmode == true)
                 {
-                    NumericUpDown.BackColor = GrayScale3;
-                    NumericUpDown.ForeColor = DarkText;
+                    nud.BackColor = DarkBack3;
+                    nud.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    NumericUpDown.BackColor = SystemColors.Window;
-                    NumericUpDown.ForeColor = LightText;
+                    nud.BackColor = SystemColors.Window;
+                    nud.ForeColor = LightText;
                 }
                 break;
 
             case "ListBox":
-                ListBox ListBox = (ListBox)control;
+                ListBox lb = (ListBox)control;
                 if (darkmode == true)
                 {
-                    ListBox.BackColor = GrayScale3;
-                    ListBox.ForeColor = DarkText;
+                    lb.BackColor = DarkBack3;
+                    lb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    ListBox.BackColor = SystemColors.Window;
-                    ListBox.ForeColor = LightText;
+                    lb.BackColor = SystemColors.Window;
+                    lb.ForeColor = LightText;
                 }
                 break;
 
             case "CheckedListBox":
-                CheckedListBox CheckedListBox = (CheckedListBox)control;
+                CheckedListBox clb = (CheckedListBox)control;
                 if (darkmode == true)
                 {
-                    CheckedListBox.BackColor = GrayScale2;
-                    CheckedListBox.ForeColor = DarkText;
+                    clb.BackColor = DarkBack2;
+                    clb.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    CheckedListBox.BackColor = SystemColors.Window;
-                    CheckedListBox.ForeColor = LightText;
+                    clb.BackColor = SystemColors.Window;
+                    clb.ForeColor = LightText;
                 }
                 break;
 
             case "ListView":
-                ListView ListView = (ListView)control;
+                ListView lv = (ListView)control;
                 if (darkmode == true)
                 {
-                    ListView.BackColor = GrayScale2;
-                    ListView.ForeColor = DarkText;
+                    lv.BackColor = DarkBack2;
+                    lv.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    ListView.BackColor = SystemColors.Window;
-                    ListView.ForeColor = LightText;
+                    lv.BackColor = SystemColors.Window;
+                    lv.ForeColor = LightText;
                 }
                 break;
 
             case "TreeView":
-                TreeView TreeView = (TreeView)control;
+                TreeView tv = (TreeView)control;
                 if (darkmode == true)
                 {
-                    TreeView.BackColor = GrayScale3;
-                    TreeView.ForeColor = DarkText;
+                    tv.BackColor = DarkBack3;
+                    tv.ForeColor = DarkText;
                 }
                 if (darkmode == false)
                 {
-                    TreeView.BackColor = SystemColors.Window;
-                    TreeView.ForeColor = LightText;
+                    tv.BackColor = SystemColors.Window;
+                    tv.ForeColor = LightText;
                 }
                 break;
 
             case "MenuStrip":
-                MenuStrip MenuStrip = (MenuStrip)control;
+                MenuStrip ms = (MenuStrip)control;
                 if (darkmode == true)
                 {
-                    MenuStrip.BackColor = GrayScale1;
-                    MenuStrip.Renderer = new ToolStripProfessionalRenderer(new ToolStripDark());
-                    
+                    ms.BackColor = DarkToolStrip;
+                    ms.Renderer = new DarkToolStripRenderer();
+
                 }
                 if (darkmode == false)
                 {
-                    MenuStrip.BackColor = SystemColors.Control;
-                    MenuStrip.Renderer = new ToolStripProfessionalRenderer(new ToolStripLight());
+                    ms.BackColor = LightToolStrip;
+                    ms.Renderer = new LightToolStripRenderer();
                 }
 
-                ToolStripItems(MenuStrip.Items, darkmode);
+                ToolStripItems(ms.Items, darkmode);
                 break;
         }
 
@@ -346,10 +351,20 @@ public static class DarkMode
         {
             if (component is ContextMenuStrip)
             {
-                if (darkmode == true) ((ContextMenuStrip)component).Renderer = new ToolStripProfessionalRenderer(new ToolStripDark());
-                if (darkmode == false) ((ContextMenuStrip)component).Renderer = new ToolStripProfessionalRenderer(new ToolStripLight());
+                ContextMenuStrip cms = (ContextMenuStrip)component;
 
-                ToolStripItems(((ContextMenuStrip)component).Items, darkmode);
+                if (darkmode == true)
+                {
+                    cms.BackColor = DarkToolStrip;
+                    cms.Renderer = new DarkToolStripRenderer();
+                }
+                if (darkmode == false) 
+                {
+                    cms.BackColor = LightToolStrip;
+                    cms.Renderer = new LightToolStripRenderer();
+                }
+
+                ToolStripItems(cms.Items, darkmode);
             }
         }
     }
@@ -358,15 +373,55 @@ public static class DarkMode
     {
         foreach (ToolStripItem item in items)
         {
-            if (darkmode == true)
+            if (item is ToolStripMenuItem)
             {
-                item.BackColor = GrayScale1;
-                item.ForeColor = DarkText;
+                ToolStripMenuItem tsmi = (ToolStripMenuItem)item;
+
+                if (darkmode == true)
+                {
+                    tsmi.BackColor = DarkToolStrip;
+                    tsmi.ForeColor = DarkText;
+                }
+                if (darkmode == false)
+                {
+                    tsmi.BackColor = LightToolStrip;
+                    tsmi.ForeColor = LightText;
+                }
             }
-            if (darkmode == false)
+
+            if (item is ToolStripTextBox)
             {
-                item.BackColor = SystemColors.Control;
-                item.ForeColor = SystemColors.ControlText;
+                ToolStripTextBox tstb = (ToolStripTextBox)item;
+                tstb.BorderStyle = BorderStyle.FixedSingle;
+
+                if (darkmode == true)
+                {
+                    tstb.BackColor = DarkBack1;
+                    tstb.ForeColor = DarkText;
+                }
+                if (darkmode == false)
+                {
+                    tstb.BackColor = SystemColors.Control;
+                    tstb.ForeColor = LightText;
+                }
+            }
+
+            if (item is ToolStripComboBox)
+            {
+                ToolStripComboBox tscb = (ToolStripComboBox)item;
+
+                if (darkmode == true)
+                {
+                    tscb.ComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                    tscb.ComboBox.BackColor = DarkBack1;
+                    tscb.ForeColor = DarkText;
+                }
+                if (darkmode == false)
+                {
+                    tscb.ComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+                    tscb.ComboBox.BackColor = SystemColors.Control;
+                    tscb.ForeColor = LightText;
+                }
             }
 
             if (item is ToolStripDropDownItem)
@@ -376,41 +431,105 @@ public static class DarkMode
         }
     }
 
-    public class ToolStripDark : ProfessionalColorTable
+    class DarkToolStripRenderer : ToolStripProfessionalRenderer
     {
-        public override Color MenuItemBorder
+        public DarkToolStripRenderer() : base(new ToolStripDark()) { }
+
+        class ToolStripDark : ProfessionalColorTable
         {
-            get { return SystemColors.MenuHighlight; }
+            public override Color MenuItemBorder
+            {
+                get { return SystemColors.MenuHighlight; }
+            }
+
+            public override Color MenuItemSelectedGradientBegin
+            {
+                get { return SystemColors.Highlight; }
+            }
+
+            public override Color MenuItemSelectedGradientEnd
+            {
+                get { return SystemColors.Highlight; }
+            }
+
+            public override Color MenuItemPressedGradientBegin
+            {
+                get { return DarkBack3; }
+            }
+
+            public override Color MenuItemPressedGradientEnd
+            {
+                get { return DarkBack3; }
+            }
+
+            public override Color MenuItemSelected
+            {
+                get { return SystemColors.Highlight; }
+            }
+
+            public override Color ToolStripDropDownBackground
+            {
+                get { return DarkToolStrip; }
+            }
+
+            public override Color ImageMarginGradientBegin
+            {
+                get { return DarkToolStrip; }
+            }
+
+            public override Color ImageMarginGradientMiddle
+            {
+                get { return DarkToolStrip; }
+            }
+
+            public override Color ImageMarginGradientEnd
+            {
+                get { return DarkToolStrip; }
+            }
         }
 
-        public override Color MenuItemSelectedGradientBegin
+        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
         {
-            get { return SystemColors.Highlight; }
+            e.Graphics.FillRectangle(new SolidBrush(DarkToolStrip), 31, 0, e.Item.Width, e.Item.Height);
+            e.Graphics.DrawLine(new Pen(GradientGray(189)), 31, e.Item.Height / 2, e.Item.Width, e.Item.Height / 2);
         }
 
-        public override Color MenuItemSelectedGradientEnd
+        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
         {
-            get { return SystemColors.Highlight; }
-        }
-
-        public override Color MenuItemPressedGradientBegin
-        {
-            get { return GrayScale3; }
-        }
-
-        public override Color MenuItemPressedGradientEnd
-        {
-            get { return GrayScale3; }
-        }
-
-        public override Color MenuItemSelected
-        {
-            get { return SystemColors.Highlight; }
+            e.ArrowColor = Color.White;
+            base.OnRenderArrow(e);
         }
     }
 
-    public class ToolStripLight : ProfessionalColorTable
+    class LightToolStripRenderer : ToolStripProfessionalRenderer
     {
+        public LightToolStripRenderer() : base(new ToolStripLight()) { }
 
+        public class ToolStripLight : ProfessionalColorTable
+        {
+
+            public override Color ToolStripDropDownBackground
+            {
+                get { return LightToolStrip; }
+            }
+
+            public override Color ImageMarginGradientBegin
+            {
+                //get { return GradientGray(252); }
+                get { return LightToolStrip; }
+            }
+
+            public override Color ImageMarginGradientMiddle
+            {
+                //get { return GradientGray(247); }
+                get { return LightToolStrip; }
+            }
+
+            public override Color ImageMarginGradientEnd
+            {
+                //get { return GradientGray(241); }
+                get { return LightToolStrip; }
+            }
+        }
     }
 }
