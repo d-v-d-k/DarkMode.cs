@@ -131,7 +131,6 @@ public static class DarkMode
                 }
                 if (darkmode == false)
                 {
-                    //gb.BackColor = SystemColors.ControlLight;
                     gb.BackColor = SystemColors.Control;
                     gb.ForeColor = LightText;
                 }
@@ -163,12 +162,12 @@ public static class DarkMode
 
             case "LinkLabel":
                 LinkLabel llbl = (LinkLabel)control;
-                if (darkmode == true)
+                if (darkmode)
                 {
                     llbl.BackColor = Color.Transparent;
                     llbl.LinkColor = Color.LightBlue;
                 }
-                else if (darkmode == false)
+                else
                 {
                     llbl.BackColor = Color.Transparent;
                     llbl.LinkColor = Color.FromArgb(0, 0, 255);
@@ -176,15 +175,15 @@ public static class DarkMode
                 break;
 
             case "Button":
-                Button btn = (Button)control;
 
-                if (darkmode == true)
+                Button btn = (Button)control;
+                if (darkmode)
                 {
                     btn.FlatStyle = FlatStyle.Flat;
                     btn.BackColor = DarkBack3;
                     btn.ForeColor = DarkText;
                 }
-                if (darkmode == false)
+                else
                 {
                     btn.FlatStyle = FlatStyle.System;
                     btn.BackColor = SystemColors.Control;
@@ -193,44 +192,59 @@ public static class DarkMode
                 break;
 
             case "TextBox":
+
                 TextBox tb = (TextBox)control;
-                if (darkmode == true)
+                if (darkmode)
                 {
                     tb.BackColor = DarkBack3;
                     tb.ForeColor = DarkText;
+                    if (tb.Enabled == false || tb.ReadOnly == true) { 
+                        tb.BackColor = DarkBack1; tb.ForeColor = Color.LightGray; }
                 }
-                if (darkmode == false)
+                else
                 {
                     tb.BackColor = SystemColors.Window;
                     tb.ForeColor = LightText;
+                    if (tb.Enabled == false || tb.ReadOnly == true) {
+                        tb.BackColor = SystemColors.Control; tb.ForeColor = Color.DimGray; }
                 }
                 break;
 
             case "MaskedTextBox":
+
                 MaskedTextBox mtb = (MaskedTextBox)control;
-                if (darkmode == true)
+                if (darkmode)
                 {
                     mtb.BackColor = DarkBack3;
                     mtb.ForeColor = DarkText;
+                    if (mtb.Enabled == false || mtb.ReadOnly == true) { 
+                        mtb.BackColor = DarkBack1; mtb.ForeColor = Color.LightGray; }
                 }
-                if (darkmode == false)
+                else
                 {
                     mtb.BackColor = SystemColors.Window;
                     mtb.ForeColor = LightText;
+                    if (mtb.Enabled == false || mtb.ReadOnly == true) { 
+                        mtb.BackColor = SystemColors.Control; mtb.ForeColor = Color.DimGray; }
                 }
                 break;
 
             case "RichTextBox":
+
                 RichTextBox rtb = (RichTextBox)control;
-                if (darkmode == true)
+                if (darkmode)
                 {
                     rtb.BackColor = DarkBack3;
                     rtb.ForeColor = DarkText;
+                    if (rtb.Enabled == false || rtb.ReadOnly == true) { 
+                        rtb.BackColor = DarkBack1; rtb.ForeColor = Color.LightGray; }
                 }
-                if (darkmode == false)
+                else
                 {
                     rtb.BackColor = SystemColors.Window;
                     rtb.ForeColor = LightText;
+                    if (rtb.Enabled == false || rtb.ReadOnly == true) { 
+                        rtb.BackColor = SystemColors.Control; rtb.ForeColor = Color.DimGray; }
                 }
                 break;
 
@@ -254,11 +268,15 @@ public static class DarkMode
                 {
                     nud.BackColor = DarkBack3;
                     nud.ForeColor = DarkText;
+                    if (nud.Enabled == false || nud.ReadOnly == true) {
+                        nud.BackColor = DarkBack1; nud.ForeColor = Color.LightGray; }
                 }
                 if (darkmode == false)
                 {
                     nud.BackColor = SystemColors.Window;
                     nud.ForeColor = LightText;
+                    if (nud.Enabled == false || nud.ReadOnly == true) {
+                        nud.BackColor = SystemColors.Control; nud.ForeColor = Color.DimGray; }
                 }
                 break;
 
@@ -334,6 +352,10 @@ public static class DarkMode
 
                 ToolStripItems(ms.Items, darkmode);
                 break;
+
+            /*case "ContextMenuStrip":
+                ContextMenuStrip cms = (ContextMenuStrip)control;
+                break;*/
         }
 
         foreach (Control child in control.Controls)
