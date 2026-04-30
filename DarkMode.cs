@@ -353,13 +353,11 @@ public static class DarkMode
                 if (darkmode)
                 {
                     ss.BackColor = DarkToolStrip;
-                    ss.RenderMode = ToolStripRenderMode.Professional;
                     ss.Renderer = new ToolStripDarkRenderer();
                 }
                 else
                 {
                     ss.BackColor = LightToolStrip;
-                    ss.RenderMode = ToolStripRenderMode.Professional;
                     ss.Renderer = new ToolStripLightRenderer();
                 }
 
